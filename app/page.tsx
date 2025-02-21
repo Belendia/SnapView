@@ -1,6 +1,7 @@
 import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import { getTranslations } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
 
@@ -9,7 +10,14 @@ const font = Poppins({
   weight: ["600"],
 });
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const locale = (await searchParams)?.locale ?? "en";
+  const translations = await getTranslations(locale);
+
   return (
     <main className="flex h-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white to-gray-300">
       <div className="space-y-6 text-center">
@@ -19,11 +27,9 @@ export default function Home() {
             font.className
           )}
         >
-          🔐 Auth
+          🔐 {translations.auth}
         </h1>
-        <p className="text-black text-lg">
-          Please sign in to access your dashboards
-        </p>
+        <p className="text-black text-lg">{translations.pleaseSignIn}</p>
         <div>
           <LoginButton asChild>
             <Button variant="default" size="lg">
