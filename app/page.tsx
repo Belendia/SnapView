@@ -29,11 +29,11 @@ export default async function Home({
         >
           🔐 {translations.auth}
         </h1>
-        <p className="text-black text-lg">{translations.pleaseSignIn}</p>
+        <p className="text-black text-lg">{translations.pleaseLogIn}</p>
         <div>
           <LoginButton asChild>
             <Button variant="default" size="lg">
-              Sign in
+              Log in
             </Button>
           </LoginButton>
         </div>
