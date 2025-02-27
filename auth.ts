@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
 
 import authConfig from "@/auth.config";
 import { db } from "@/lib/db";
@@ -12,6 +11,7 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  ...authConfig,
   callbacks: {
     async session({ token, session }) {
       if (token.sub && session.user) {
@@ -19,13 +19,13 @@ export const {
       }
 
       if (token.role && session.user) {
-        session.user.role = token.role as UserRole;
+        session.user.role = token.role;
       }
 
       if (session.user) {
         session.user.name = token.name;
-        session.user.username = token.username as string;
-        // session.user.isOAuth = token.isOAuth as boolean;
+        session.user.username = token.username;
+        session.user.isOAuth = token.isOAuth;
       }
 
       return session;
@@ -51,5 +51,4 @@ export const {
   },
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
-  ...authConfig,
 });

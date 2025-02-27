@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import "@/lib/env-check";
 
 const nextConfig: NextConfig = {
   i18n: {

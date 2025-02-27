@@ -1,16 +1,12 @@
-import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 import { LoginSchema } from "@/schemas";
 import { getUserByUsername } from "@/lib/data";
+import { decryptPassword } from "@/lib/crypto";
 
 export default {
   providers: [
-    // OAuthProvider({
-    //   clientId: process.env.DHIS2_CLIENT_ID,
-    //   clientSecret: process.env.DHIS2_CLIENT_SECRET,
-    // }),
     Credentials({
       async authorize(credentials) {
         const validatedFields = LoginSchema.safeParse(credentials);
@@ -21,9 +17,9 @@ export default {
           const user = await getUserByUsername(username);
           if (!user || !user.password) return null;
 
-          const passwordsMatch = await bcrypt.compare(password, user.password);
+          const decryptedPassword = await decryptPassword(user.password);
 
-          if (passwordsMatch) return user;
+          if (decryptedPassword && password === decryptedPassword) return user;
         }
 
         return null;
