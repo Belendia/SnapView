@@ -11,12 +11,21 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  ...authConfig,
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // Allow OAuth without email verification
+      if (account?.provider !== "credentials") return true;
+
+      // const existingUser = await getUserById(user.id);
+
+      // You can implement whether the user has verified their email or confirmed two-step verification here.
+
+      return true;
+    },
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
@@ -55,4 +64,5 @@ export const {
   },
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
+  ...authConfig,
 });
