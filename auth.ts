@@ -58,7 +58,7 @@ export const {
       token.name = existingUser.name;
       token.username = existingUser.username;
       token.role = existingUser.role;
-
+      console.log(token);
       return token;
     },
   },
