@@ -34,9 +34,6 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <div className="flex p-2 justify-end">
-            <LanguageSwitcher />
-          </div>
           <Toaster />
 
           {children}

@@ -1,40 +1,55 @@
 "use client";
 
-import Link from "next/link";
+import { FC, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import {
+  HomeIcon,
+  Pencil1Icon,
+  DrawingPinIcon,
+  GearIcon,
+} from "@radix-ui/react-icons";
+import { DesktopNavbar } from "./desktop-navbar";
+import { MobileNavbar } from "./mobile-navbar";
+import { IconProps } from "@radix-ui/react-icons/dist/types";
 
-import { Button } from "@/components/ui/button";
-import { UserButton } from "@/components/auth/user-button";
+const sections = [
+  { id: "home", label: "Home", icon: HomeIcon, link: "/dashboard" },
+  { id: "data-entry", label: "Data Entry", icon: Pencil1Icon, link: "/client" },
+  { id: "design", label: "Design", icon: DrawingPinIcon, link: "/server" },
+  { id: "settings", label: "Settings", icon: GearIcon, link: "/settings" },
+];
+
+interface Section {
+  id: string;
+  label: string;
+  icon: FC<IconProps>;
+  link: string;
+}
+
+export type NavbarProps = {
+  pathname: string;
+  sections: Section[];
+};
 
 export const Navbar = () => {
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
-  return (
-    <nav className="bg-gray-200 flex justify-between items-center p-4 rounded-xl w-[600px] shadow-sm">
-      <div className="flex gap-x-2">
-        <Button
-          asChild
-          variant={pathname === "/server" ? "default" : "outline"}
-        >
-          <Link href="/server">Server</Link>
-        </Button>
-        <Button
-          asChild
-          variant={pathname === "/client" ? "default" : "outline"}
-        >
-          <Link href="/client">Client</Link>
-        </Button>
-        <Button asChild variant={pathname === "/admin" ? "default" : "outline"}>
-          <Link href="/admin">Admin</Link>
-        </Button>
-        <Button
-          asChild
-          variant={pathname === "/settings" ? "default" : "outline"}
-        >
-          <Link href="/settings">Settings</Link>
-        </Button>
-      </div>
-      <UserButton />
-    </nav>
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return isMobile ? (
+    <MobileNavbar pathname={pathname} sections={sections} />
+  ) : (
+    <DesktopNavbar pathname={pathname} sections={sections} />
   );
 };
