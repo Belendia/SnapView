@@ -11,6 +11,7 @@ import {
 import { DesktopNavbar } from "./desktop-navbar";
 import { MobileNavbar } from "./mobile-navbar";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
+import { MobileTopbar } from "./mobile-topbar";
 
 const sections = [
   { id: "home", label: "Home", icon: HomeIcon, link: "/dashboard" },
@@ -48,7 +49,10 @@ export const Navbar = () => {
   }, []);
 
   return isMobile ? (
-    <MobileNavbar pathname={pathname} sections={sections} />
+    <>
+      <MobileTopbar />
+      <MobileNavbar pathname={pathname} sections={sections} />
+    </>
   ) : (
     <DesktopNavbar pathname={pathname} sections={sections} />
   );
