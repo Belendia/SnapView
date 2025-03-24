@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition, useState } from "react";
 import { useSession } from "next-auth/react";
+import { logout } from "@/actions/logout";
 
 import {
   Select,
@@ -38,6 +39,10 @@ const SettingsPage = () => {
   const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
+
+  const onLogout = () => {
+    logout();
+  };
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
@@ -120,6 +125,10 @@ const SettingsPage = () => {
             <FormSuccess message={success} />
             <Button disabled={isPending} type="submit">
               Save
+            </Button>
+
+            <Button onClick={() => onLogout()} type="button">
+              Logout
             </Button>
           </form>
         </Form>
