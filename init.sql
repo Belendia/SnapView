@@ -1,0 +1,2 @@
+CREATE DATABASE inngest;
+CREATE DATABASE snapview;

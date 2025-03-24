@@ -1,8 +1,24 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: strong_password_here
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  
   # web:
   #   build:
   #     context: .
   #     dockerfile: Dockerfile
+  #   environment:
+  #     - INNGEST_DEV=1
+  #     - INNGEST_BASE_URL=http://inngest:8288
   #   ports:
   #     - "3000:3000"
   #   depends_on:
@@ -11,17 +27,37 @@ services:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules
 
-  db:
-    image: postgres:16-alpine
-    container_name: db
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: dashtel
+      - "6379:6379"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - redis_data:/data
+
+  inngest:
+    image: inngest/inngest:v1.5.5
+    container_name: inngest
+    command: >
+      inngest start
+      --sdk-url http://host.docker.internal:3000/api/inngest
+      --signing-key your_inngest_signing_key
+      --postgres-uri postgres://postgres:strong_password_here@db:5432/inngest
+      --redis-uri redis://redis:6379
+      --port 8288
+    restart: unless-stopped
+    environment:
+      INNGEST_LOG_LEVEL: info
+      INNGEST_DISABLE_TELEMETRY: "true"
+    ports:
+      - '8288:8288'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+      - redis
 
 volumes:
   pg_data:
+  redis_data:
