@@ -63,9 +63,9 @@ const DashboardPage = () => {
             <div
               className="w-full max-w-md sm:max-w-lg mx-auto rounded-2xl bg-white dark:bg-card shadow-xl relative flex flex-col overflow-hidden"
               style={{
-                height: "calc(100vh - 4rem - 4rem)", // adjust for header + bottom navbar
-                paddingTop: "1rem",
-                paddingBottom: "3rem", // enough room for swipe indicator
+                height: "calc(100vh - 64px - 70px)", // adjust for header + bottom navbar
+                paddingTop: "1.5rem", // for chart title
+                paddingBottom: "3.5rem", // enough room for swipe indicator
               }}
             >
               {/* Scrollable Chart Content */}

@@ -8,10 +8,10 @@ import {
   DrawingPinIcon,
   GearIcon,
 } from "@radix-ui/react-icons";
-import { DesktopNavbar } from "./desktop-navbar";
+import { DesktopAppbar } from "./desktop-appbar";
 import { MobileNavbar } from "./mobile-navbar";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
-import { MobileTopbar } from "./mobile-topbar";
+import { MobileAppbar } from "./mobile-appbar";
 
 const sections = [
   { id: "home", label: "Home", icon: HomeIcon, link: "/dashboard" },
@@ -50,10 +50,10 @@ export const Navbar = () => {
 
   return isMobile ? (
     <>
-      <MobileTopbar />
+      <MobileAppbar />
       <MobileNavbar pathname={pathname} sections={sections} />
     </>
   ) : (
-    <DesktopNavbar pathname={pathname} sections={sections} />
+    <DesktopAppbar pathname={pathname} sections={sections} />
   );
 };

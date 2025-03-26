@@ -1,33 +1,40 @@
-import { useState } from "react";
+"use client";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { FaFilter } from "react-icons/fa";
+import { logout } from "@/actions/logout";
 
 export const ToolbarButtons = () => {
-  const [showFilterPopup, setShowFilterPopup] = useState(false);
-  const [showSearchPopup, setShowSearchPopup] = useState(false);
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
-    <div className="flex items-center gap-4">
-      {/* Filter Button */}
-      <Button
-        variant="ghost"
-        onClick={() => setShowFilterPopup(!showFilterPopup)}
-        className="rounded-full p-2 transition-colors text-white hover:bg-[#00509d] hover:text-white"
-      >
-        <FaFilter className="w-5 h-5 transition-color" />
-      </Button>
-      {showFilterPopup && <></>}
-
-      {/* Search Button */}
-      <Button
-        variant="ghost"
-        onClick={() => setShowFilterPopup(!showFilterPopup)}
-        className="rounded-full p-2 transition-colors text-white hover:bg-[#00509d] hover:text-white"
-      >
-        <MagnifyingGlassIcon className="w-6 h-6 transition-colors" />
-      </Button>
-      {showSearchPopup && <></>}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="p-0 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur shadow-md border border-white/20 w-9 h-9"
+        >
+          <Avatar className="w-8 h-8">
+            {/* If user image exists, show it here */}
+            <AvatarImage src="/user-avatar.png" alt="User" />
+            {/* Fallback: User initials */}
+            <AvatarFallback className="bg-white/30 text-sm text-white font-semibold">
+              U
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
