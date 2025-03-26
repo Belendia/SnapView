@@ -1,22 +1,8 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import ReactECharts from "echarts-for-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -26,52 +12,100 @@ const chartData = [
   { month: "June", desktop: 214, mobile: 140 },
 ];
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+const months = chartData.map((item) => item.month);
+const desktopValues = chartData.map((item) => item.desktop);
+const mobileValues = chartData.map((item) => item.mobile);
+
+const barOption = {
+  tooltip: {
+    trigger: "axis",
+    axisPointer: {
+      type: "shadow",
+    },
   },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
+  legend: {
+    data: ["Desktop", "Mobile"],
+    bottom: 0,
   },
-} satisfies ChartConfig;
+  grid: {
+    top: "12%",
+    left: "5%",
+    right: "5%",
+    bottom: "18%", // extra room for legend
+    containLabel: true,
+  },
+  xAxis: {
+    type: "category",
+    data: months,
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      formatter: (value: string) => value.slice(0, 3),
+    },
+  },
+  yAxis: {
+    type: "value",
+    axisLine: { show: false },
+    splitLine: {
+      lineStyle: {
+        type: "dashed",
+      },
+    },
+  },
+  series: [
+    {
+      name: "Desktop",
+      type: "bar",
+      data: desktopValues,
+      itemStyle: {
+        color: "hsl(220, 90%, 60%)", // match your --chart-1
+        borderRadius: [4, 4, 0, 0],
+      },
+      barGap: "0%",
+    },
+    {
+      name: "Mobile",
+      type: "bar",
+      data: mobileValues,
+      itemStyle: {
+        color: "hsl(170, 70%, 50%)", // match your --chart-2
+        borderRadius: [4, 4, 0, 0],
+      },
+    },
+  ],
+};
 
 export function SnapViewColumnChart() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Column Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
-            />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
+    <div className="w-full h-full flex flex-col justify-between px-4 py-6 bg-background dark:bg-muted text-foreground">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-xl font-semibold">Column Chart – Multiple</h2>
+        <p className="text-sm text-muted-foreground">January - June 2024</p>
+      </div>
+
+      {/* Chart Area */}
+      <div className="flex-1 flex items-center justify-center w-full">
+        <div className="w-full h-[400px] max-w-3xl">
+          <ReactECharts
+            option={barOption}
+            style={{ width: "100%", height: "100%" }}
+            notMerge={true}
+            lazyUpdate={true}
+            theme="light"
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-sm text-center mt-4">
+        <div className="font-medium flex items-center justify-center gap-2">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none text-muted-foreground">
+        <div className="text-muted-foreground">
           Showing total visitors for the last 6 months
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

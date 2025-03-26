@@ -1,110 +1,117 @@
 "use client";
 
+import ReactECharts from "echarts-for-react";
 import { TrendingUp } from "lucide-react";
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-const chartData = [{ month: "january", desktop: 1260, mobile: 570 }];
+// Setup your values
+const target = 10000;
+const achieved = 3000;
+const percentage = ((achieved / target) * 100).toFixed(1);
+const remaining = target - achieved;
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+const halfDonutOption = {
+  tooltip: {
+    trigger: "item",
+    formatter: "{b}: {c} ({d}%)",
   },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
+  legend: {
+    show: false,
   },
-} satisfies ChartConfig;
+  series: [
+    {
+      name: "Progress",
+      type: "pie",
+      radius: ["60%", "85%"],
+      center: ["50%", "70%"],
+      startAngle: 180,
+      endAngle: 360,
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+      },
+      data: [
+        {
+          value: achieved,
+          name: "Achieved",
+          itemStyle: {
+            color: "hsl(220, 90%, 60%)", // Change to your theme color
+          },
+        },
+        {
+          value: remaining,
+          name: "Remaining",
+          itemStyle: {
+            color: "#e5e7eb", // Light gray
+          },
+          tooltip: { show: false },
+        },
+      ],
+    },
+  ],
+  graphic: {
+    elements: [
+      {
+        type: "group",
+        left: "center",
+        top: "center",
+        children: [
+          {
+            type: "text",
+            style: {
+              text: `${percentage}%`,
+              fontSize: 26,
+              fontWeight: "bold",
+              fill: "#111",
+              textAlign: "center",
+            },
+          },
+          {
+            type: "text",
+            top: 30,
+            style: {
+              text: `${achieved.toLocaleString()} of ${target.toLocaleString()}`,
+              fontSize: 14,
+              fill: "#666",
+              textAlign: "center",
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
 
 export function SnapViewGaugeChart() {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile;
-
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Radial Chart - Stacked</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-1 items-center pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[250px]"
-        >
-          <RadialBarChart
-            data={chartData}
-            endAngle={180}
-            innerRadius={80}
-            outerRadius={130}
-          >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle">
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) - 16}
-                          className="fill-foreground text-2xl font-bold"
-                        >
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 4}
-                          className="fill-muted-foreground"
-                        >
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </PolarRadiusAxis>
-            <RadialBar
-              dataKey="desktop"
-              stackId="a"
-              cornerRadius={5}
-              fill="var(--color-desktop)"
-              className="stroke-transparent stroke-2"
-            />
-            <RadialBar
-              dataKey="mobile"
-              fill="var(--color-mobile)"
-              stackId="a"
-              cornerRadius={5}
-              className="stroke-transparent stroke-2"
-            />
-          </RadialBarChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+    <div className="w-full h-full flex flex-col justify-between px-4 py-6 bg-background dark:bg-muted text-foreground">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-xl font-semibold">Half Donut – Progress</h2>
+        <p className="text-sm text-muted-foreground">January - June 2024</p>
+      </div>
+
+      {/* Chart */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full h-[400px] max-w-sm">
+          <ReactECharts
+            option={halfDonutOption}
+            style={{ width: "100%", height: "100%" }}
+            notMerge={true}
+            lazyUpdate={true}
+            theme="light"
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-sm text-center mt-4">
+        <div className="font-medium flex items-center justify-center gap-2">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+        <div className="text-muted-foreground">
+          Showing progress toward {target.toLocaleString()} units
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

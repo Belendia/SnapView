@@ -1,82 +1,109 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Pie, PieChart } from "recharts";
+import ReactECharts from "echarts-for-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+type SnapViewPieChartProps = {
+  title?: string;
+  dateRange?: string;
+  donut?: boolean; // toggle between pie and donut
+};
+
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { browser: "Chrome", value: 275 },
+  { browser: "Safari", value: 200 },
+  { browser: "Firefox", value: 187 },
+  { browser: "Edge", value: 173 },
+  { browser: "Other", value: 90 },
 ];
 
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig;
+export function SnapViewPieChart({
+  title = "Pie Chart – Label",
+  dateRange = "January - June 2024",
+  donut = false,
+}: SnapViewPieChartProps) {
+  const colors = [
+    "hsl(220, 90%, 60%)", // Chrome
+    "hsl(170, 70%, 50%)", // Safari
+    "hsl(290, 70%, 50%)", // Firefox
+    "hsl(30, 90%, 60%)", // Edge
+    "hsl(0, 0%, 60%)", // Other
+  ];
 
-export function SnapViewPieChart() {
+  const option = {
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
+    },
+    legend: {
+      orient: "vertical",
+      right: 10,
+      top: "center",
+      textStyle: {
+        fontSize: 12,
+      },
+    },
+    series: [
+      {
+        name: "Visitors",
+        type: "pie",
+        radius: donut ? ["40%", "70%"] : "70%",
+        center: ["40%", "50%"],
+        avoidLabelOverlap: false,
+        label: {
+          show: true,
+          position: "outside",
+          formatter: "{b}",
+        },
+        labelLine: {
+          show: true,
+        },
+        itemStyle: {
+          borderRadius: 4,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        data: chartData.map((item, i) => ({
+          name: item.browser,
+          value: item.value,
+          itemStyle: {
+            color: colors[i % colors.length],
+          },
+        })),
+      },
+    ],
+  };
+
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
-        >
-          <PieChart>
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie data={chartData} dataKey="visitors" label nameKey="browser" />
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+    <div className="w-full h-full flex flex-col justify-between px-4 py-6 bg-background dark:bg-muted text-foreground">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-xl font-semibold">{title}</h2>
+        <p className="text-sm text-muted-foreground">{dateRange}</p>
+      </div>
+
+      {/* Chart */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-lg aspect-square">
+          <ReactECharts
+            option={option}
+            style={{ width: "100%", height: "100%" }}
+            notMerge={true}
+            lazyUpdate={true}
+            theme="light"
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-sm text-center mt-4">
+        <div className="font-medium flex items-center justify-center gap-2">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="leading-none text-muted-foreground">
+        <div className="text-muted-foreground">
           Showing total visitors for the last 6 months
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

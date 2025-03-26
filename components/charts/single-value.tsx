@@ -1,37 +1,92 @@
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+"use client";
 
-import { TrendingUpIcon } from "lucide-react";
+import ReactECharts from "echarts-for-react";
 
 export function SnapViewSingleValueChart() {
+  const value = "$1,250.00";
+  const trend = "+12.5%";
+
+  const option = {
+    graphic: [
+      {
+        type: "text",
+        left: "center",
+        top: "8%",
+        style: {
+          text: "Single Value Chart",
+          fontSize: 20,
+          fontWeight: "bold",
+          fill: "#0f172a",
+        },
+      },
+      {
+        type: "text",
+        left: "center",
+        top: "16%",
+        style: {
+          text: "Total Revenue",
+          fontSize: 14,
+          fill: "#64748b",
+        },
+      },
+      {
+        type: "text",
+        left: "center",
+        top: "38%",
+        style: {
+          text: value,
+          fontSize: 48,
+          fontWeight: "bold",
+          fill: "#0f172a",
+        },
+      },
+      {
+        type: "text",
+        right: 20,
+        top: 20,
+        style: {
+          text: `▲ ${trend}`,
+          fontSize: 12,
+          fill: "#15803d",
+          backgroundColor: "#ecfdf5",
+          borderColor: "#bbf7d0",
+          borderWidth: 1,
+          borderRadius: 4,
+          padding: [4, 8],
+        },
+      },
+      {
+        type: "text",
+        left: "center",
+        bottom: 60,
+        style: {
+          text: "Trending up this month",
+          fontSize: 14,
+          fontWeight: 500,
+          fill: "#0f172a",
+        },
+      },
+      {
+        type: "text",
+        left: "center",
+        bottom: 36,
+        style: {
+          text: "Visitors for the last 6 months",
+          fontSize: 12,
+          fill: "#94a3b8",
+        },
+      },
+    ],
+  };
+
   return (
-    <Card className="@container/card flex flex-col flex-1">
-      <CardContent className="relative flex-1 flex flex-col items-center justify-center gap-2">
-        <CardDescription>Total Revenue</CardDescription>
-        <CardTitle className="text-5xl @[400px]/card:text-6xl font-semibold tabular-nums text-center">
-          $1,250.00
-        </CardTitle>
-        <div className="absolute right-4 top-4">
-          <Badge variant="outline" className="flex gap-1 rounded-lg text-xs">
-            <TrendingUpIcon className="size-3" />
-            +12.5%
-          </Badge>
-        </div>
-      </CardContent>
-      <CardFooter className="flex-col items-center gap-1 text-sm pb-4">
-        <div className="flex gap-2 font-medium items-center">
-          Trending up this month <TrendingUpIcon className="size-4" />
-        </div>
-        <div className="text-muted-foreground">
-          Visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
+    <div className="w-full h-full px-4 py-6 bg-background dark:bg-muted">
+      <div className="w-full max-w-xl h-[90vh] mx-auto">
+        <ReactECharts
+          option={option}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+    </div>
   );
 }
