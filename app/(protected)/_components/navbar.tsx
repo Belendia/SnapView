@@ -52,7 +52,6 @@ export const Navbar = () => {
   return isMobile ? (
     <>
       <MobileAppbar sections={sections} pathname={pathname} />
-      {/* <MobileNavbar pathname={pathname} sections={sections} /> */}
     </>
   ) : (
     <DesktopAppbar pathname={pathname} sections={sections} />
