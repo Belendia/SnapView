@@ -57,6 +57,19 @@ services:
     depends_on:
       - db
       - redis
+  
+  bot:
+    build: 
+      context: ./Bot
+      dockerfile: Dockerfile
+    container_name: bot
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    # volumes:
+    #   - ./SnapViewBot:/app
+    #   - /app/node_modules
+    command: pnpm start
 
 volumes:
   pg_data:

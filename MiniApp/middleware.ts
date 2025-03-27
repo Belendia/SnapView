@@ -8,7 +8,6 @@ import {
   authRoutes,
   publicRoutes,
 } from "@/routes";
-import { CarTaxiFront } from "lucide-react";
 
 const { auth } = NextAuth(authConfig);
 
