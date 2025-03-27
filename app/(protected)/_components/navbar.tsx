@@ -9,7 +9,7 @@ import {
   GearIcon,
 } from "@radix-ui/react-icons";
 import { DesktopAppbar } from "./desktop-appbar";
-import { MobileNavbar } from "./mobile-navbar";
+
 import { IconProps } from "@radix-ui/react-icons/dist/types";
 import { MobileAppbar } from "./mobile-appbar";
 
@@ -30,6 +30,7 @@ interface Section {
 export type NavbarProps = {
   pathname: string;
   sections: Section[];
+  closeDrawer?: () => void;
 };
 
 export const Navbar = () => {
@@ -50,8 +51,8 @@ export const Navbar = () => {
 
   return isMobile ? (
     <>
-      <MobileAppbar />
-      <MobileNavbar pathname={pathname} sections={sections} />
+      <MobileAppbar sections={sections} pathname={pathname} />
+      {/* <MobileNavbar pathname={pathname} sections={sections} /> */}
     </>
   ) : (
     <DesktopAppbar pathname={pathname} sections={sections} />
