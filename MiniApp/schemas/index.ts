@@ -64,7 +64,27 @@ export const RegisterSchema = z.object({
   password: z.string().min(6, {
     message: "Minimum 6 characters required",
   }),
-  name: z.string().min(1, {
-    message: "Name is required",
+  // name: z.string().min(1, {
+  //   message: "Name is required",
+  // }),
+});
+
+export const TelegramUserSchema = z.object({
+  telegramId: z.string().min(1),
+  username: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+export const DHIS2UserSchema = z.object({
+  telegramId: z.string().optional(),
+  username: z.string().min(1, {
+    message: "Username is required",
+  }),
+  password: z.string().min(1, {
+    message: "Password is required",
+  }),
+  systemId: z.string().min(1, {
+    message: "SystemId is required",
   }),
 });

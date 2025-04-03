@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import LanguageSwitcher from "@/components/language-switcher";
 import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
+import { PageContainer } from "@/components/page-container";
+import { I18nProvider } from "@/lib/i18n/provider";
+import { Setup } from "@/components/setup/setup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,19 +28,25 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
+  // const session = await auth();
 
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <Toaster />
+    // <SessionProvider session={session}>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <I18nProvider>
+          <Setup>
+            <PageContainer back={false}>
+              <Toaster />
 
-          {children}
-        </body>
-      </html>
-    </SessionProvider>
+              {children}
+            </PageContainer>
+          </Setup>
+        </I18nProvider>
+      </body>
+    </html>
+    // </SessionProvider>
   );
 }
