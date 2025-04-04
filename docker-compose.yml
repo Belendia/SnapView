@@ -71,6 +71,15 @@ services:
     #   - /app/node_modules
     command: pnpm start
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./Nginx/ssl:/etc/nginx/ssl:ro
+
 volumes:
   pg_data:
   redis_data:
