@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { deleteDHIS2Account, getLinkedDHIS2Accounts } from "@/actions/dhis2";
+import { getLinkedDHIS2Accounts, deleteDHIS2Account } from "@/actions/dhis2";
 import { useTelegramUser } from "@/lib/telegram";
 import { toast } from "sonner";
 import {
@@ -20,13 +20,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { MoreVertical, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,6 +42,11 @@ export default function LinkedAccountsPage() {
     { id: string; username: string; name: string; systemName: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const load = async () => {
@@ -66,6 +73,25 @@ export default function LinkedAccountsPage() {
       router.replace("/linked-accounts"); // clean URL
     }
   }, [searchParams, router]);
+
+  const handleDelete = async () => {
+    if (!tgUser || !selectedAccountId) return;
+
+    const result = await deleteDHIS2Account({
+      id: selectedAccountId,
+      telegramId: tgUser.id.toString(),
+    });
+
+    if (result.success) {
+      toast.success(result.success);
+      setAccounts((prev) => prev.filter((a) => a.id !== selectedAccountId));
+    } else {
+      toast.error(result.error || "Failed to delete account");
+    }
+
+    setDeleteDialogOpen(false);
+    setSelectedAccountId(null);
+  };
 
   return (
     <div className="flex justify-center p-4 relative">
@@ -108,7 +134,9 @@ export default function LinkedAccountsPage() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <MoreVertical className="h-5 w-5 cursor-pointer" />
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-5 w-5" />
+                              </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
@@ -118,58 +146,14 @@ export default function LinkedAccountsPage() {
                               >
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Dialog>
-                                  <DialogTrigger className="w-full text-left">
-                                    Delete
-                                  </DialogTrigger>
-                                  <DialogContent>
-                                    <DialogHeader>
-                                      <DialogTitle>Are you sure?</DialogTitle>
-                                      <p>
-                                        This action will permanently delete the
-                                        account.
-                                      </p>
-                                    </DialogHeader>
-                                    <DialogFooter className="flex justify-end gap-2">
-                                      <Button
-                                        variant="outline"
-                                        onClick={() => document.body.click()}
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        variant="destructive"
-                                        onClick={async () => {
-                                          if (!tgUser) {
-                                            toast.error(
-                                              "Telegram user not found"
-                                            );
-                                            return;
-                                          }
-                                          const res = await deleteDHIS2Account({
-                                            id: acc.id,
-                                            telegramId: tgUser.id.toString(),
-                                          });
-                                          if (res.success) {
-                                            toast.success(res.success);
-                                            setAccounts((prev) =>
-                                              prev.filter(
-                                                (item) => item.id !== acc.id
-                                              )
-                                            );
-                                          } else {
-                                            toast.error(
-                                              res.error ?? "Failed to delete"
-                                            );
-                                          }
-                                        }}
-                                      >
-                                        Delete
-                                      </Button>
-                                    </DialogFooter>
-                                  </DialogContent>
-                                </Dialog>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedAccountId(acc.id);
+                                  setDeleteDialogOpen(true);
+                                }}
+                                className="text-destructive"
+                              >
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -190,9 +174,30 @@ export default function LinkedAccountsPage() {
           aria-label="Add Account"
           className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition"
         >
-          <Plus className="h-6 w-" />
+          <Plus className="h-6 w-6" />
         </button>
       </Link>
+
+      {/* Alert Dialog for Deletion */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="sm:max-w-[90%]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete the selected DHIS2 account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/90"
+              onClick={handleDelete}
+            >
+              Yes, delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
