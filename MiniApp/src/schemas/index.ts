@@ -76,7 +76,7 @@ export const TelegramUserSchema = z.object({
   lastName: z.string().optional(),
 });
 
-export const DHIS2UserSchema = z.object({
+export const CreateDHIS2UserSchema = z.object({
   telegramId: z.string().optional(),
   username: z.string().min(1, {
     message: "Username is required",
@@ -85,6 +85,20 @@ export const DHIS2UserSchema = z.object({
     message: "Password is required",
   }),
   systemId: z.string().min(1, {
-    message: "SystemId is required",
+    message: "System is required",
+  }),
+});
+
+export const UpdateDHIS2UserSchema = z.object({
+  id: z.string().min(1),
+  telegramId: z.string().optional(),
+  username: z.string().min(1, {
+    message: "Username is required",
+  }),
+  password: z.string().min(1, {
+    message: "Password is required",
+  }),
+  systemId: z.string().min(1, {
+    message: "System is required",
   }),
 });

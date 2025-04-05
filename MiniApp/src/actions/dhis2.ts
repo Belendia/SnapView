@@ -2,18 +2,18 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { DHIS2UserSchema } from "@/schemas";
+import { CreateDHIS2UserSchema, UpdateDHIS2UserSchema } from "@/schemas";
 
 import { encryptPassword } from "@/lib/crypto";
 
 export async function createDHIS2Account(
-  values: z.infer<typeof DHIS2UserSchema>
+  values: z.infer<typeof CreateDHIS2UserSchema>
 ): Promise<{
   success?: string;
   error?: string;
   fieldErrors?: Record<string, string[]>;
 }> {
-  const validatedFields = DHIS2UserSchema.safeParse(values);
+  const validatedFields = CreateDHIS2UserSchema.safeParse(values);
 
   if (!validatedFields.success) {
     const formatted = validatedFields.error.format();
@@ -63,32 +63,104 @@ export async function createDHIS2Account(
     },
   });
 
-  return { success: "User created!" };
+  return { success: "Account connected!" };
+}
+
+export async function updateDHIS2Account(
+  values: z.infer<typeof UpdateDHIS2UserSchema>
+): Promise<{
+  success?: string;
+  error?: string;
+  fieldErrors?: Record<string, string[]>;
+}> {
+  const validated = UpdateDHIS2UserSchema.safeParse(values);
+
+  if (!validated.success) {
+    const formatted = validated.error.format();
+    return {
+      error: "Validation failed",
+      fieldErrors: {
+        id: formatted.id?._errors || [],
+        telegramId: formatted.telegramId?._errors || [],
+        username: formatted.username?._errors || [],
+        password: formatted.password?._errors || [],
+        systemId: formatted.systemId?._errors || [],
+      },
+    };
+  }
+
+  const { id, telegramId, username, password, systemId } = validated.data;
+
+  const telegramUser = await db.telegramUser.findUnique({
+    where: { telegramId },
+  });
+
+  if (!telegramUser) {
+    return { error: "Telegram user not found." };
+  }
+
+  // Ensure the user to be updated belongs to this telegram user
+  const existingUser = await db.user.findFirst({
+    where: {
+      id,
+      telegramUserId: telegramUser.id,
+    },
+  });
+
+  if (!existingUser) {
+    return {
+      error: "User not found or does not belong to this Telegram account.",
+    };
+  }
+
+  const hashedPassword = await encryptPassword(password);
+
+  await db.user.update({
+    where: { id },
+    data: {
+      username,
+      password: hashedPassword,
+      systemId,
+    },
+  });
+
+  return { success: "Account updated!" };
 }
 
 export async function getLinkedDHIS2Accounts(telegramId: string) {
-  if (!telegramId) return [];
-
-  const users = await db.user.findMany({
-    where: {
-      telegramUser: {
-        telegramId,
-      },
-    },
-    select: {
-      id: true,
-      username: true,
-      system: {
-        select: { name: true },
+  const telegramUser = await db.telegramUser.findUnique({
+    where: { telegramId },
+    include: {
+      users: {
+        select: {
+          id: true,
+          username: true,
+          system: {
+            select: {
+              name: true,
+            },
+          },
+          telegramUser: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
       },
     },
   });
 
-  return users.map((u) => ({
-    id: u.id,
-    username: u.username,
-    systemName: u.system.name,
-  }));
+  return (
+    telegramUser?.users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      name: `${user.telegramUser?.firstName ?? ""} ${
+        user.telegramUser?.lastName ?? ""
+      }`.trim(),
+      systemName: user.system?.name ?? "Unknown",
+    })) || []
+  );
 }
 
 export async function getAvailableDHIS2Systems() {
@@ -100,4 +172,54 @@ export async function getAvailableDHIS2Systems() {
   });
 
   return systems;
+}
+
+export async function getDHIS2AccountById(id: string) {
+  const account = await db.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      username: true,
+      systemId: true,
+    },
+  });
+
+  return account;
+}
+
+export async function deleteDHIS2Account({
+  id,
+  telegramId,
+}: {
+  id: string;
+  telegramId: string;
+}): Promise<{
+  success?: string;
+  error?: string;
+}> {
+  try {
+    const telegramUser = await db.telegramUser.findUnique({
+      where: { telegramId },
+      include: { users: true },
+    });
+
+    if (!telegramUser) {
+      return { error: "Unauthorized request." };
+    }
+
+    const userToDelete = telegramUser.users.find((user) => user.id === id);
+
+    if (!userToDelete) {
+      return { error: "You do not have permission to delete this account." };
+    }
+
+    await db.user.delete({
+      where: { id },
+    });
+
+    return { success: "Account deleted successfully." };
+  } catch (error) {
+    console.error("Failed to delete DHIS2 account", error);
+    return { error: "Failed to delete account." };
+  }
 }
