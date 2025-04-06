@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { CreateDHIS2UserSchema, UpdateDHIS2UserSchema } from "@/schemas";
 
 import { encryptPassword } from "@/lib/crypto";
+import { validateDHIS2Credentials } from "@/lib/dhis2";
 
 export async function createDHIS2Account(
   values: z.infer<typeof CreateDHIS2UserSchema>
@@ -48,6 +49,27 @@ export async function createDHIS2Account(
   if (existingUser) {
     return {
       error: "Only one user account can be registered per DHIS2 system..",
+    };
+  }
+
+  // Fetch system to get URL
+  const system = await db.system.findUnique({
+    where: { id: systemId },
+  });
+  if (!system) {
+    return { error: "DHIS2 system not found." };
+  }
+
+  // Validate credentials with DHIS2
+  const isValid = await validateDHIS2Credentials(
+    system.serverUrl,
+    username,
+    password
+  );
+  if (!isValid) {
+    return {
+      error:
+        "Login to the DHIS2 system was not successful. Please double-check your username and password.",
     };
   }
 
@@ -110,6 +132,27 @@ export async function updateDHIS2Account(
   if (!existingUser) {
     return {
       error: "User not found or does not belong to this Telegram account.",
+    };
+  }
+
+  // Fetch system to get URL
+  const system = await db.system.findUnique({
+    where: { id: systemId },
+  });
+  if (!system) {
+    return { error: "DHIS2 system not found." };
+  }
+
+  // Validate credentials with DHIS2
+  const isValid = await validateDHIS2Credentials(
+    system.serverUrl,
+    username,
+    password
+  );
+  if (!isValid) {
+    return {
+      error:
+        "Login to the DHIS2 system was not successful. Please double-check your username and password.",
     };
   }
 
