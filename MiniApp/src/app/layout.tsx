@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
-// import { auth } from "@/auth";
+
 import { Toaster } from "@/components/ui/sonner";
 import { PageContainer } from "@/components/page-container";
 import { I18nProvider } from "@/lib/i18n/provider";
@@ -31,7 +30,6 @@ export default async function RootLayout({
   // const session = await auth();
 
   return (
-    // <SessionProvider session={session}>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -47,6 +45,5 @@ export default async function RootLayout({
         </I18nProvider>
       </body>
     </html>
-    // </SessionProvider>
   );
 }

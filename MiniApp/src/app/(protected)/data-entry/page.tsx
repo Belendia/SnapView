@@ -1,7 +1,9 @@
+"use client";
+
 import { DataEntry } from "@/components/data-entry";
 
-const ServerPage = async () => {
+const DataEntryPage = () => {
   return <DataEntry />;
 };
 
-export default ServerPage;
+export default DataEntryPage;

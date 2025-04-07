@@ -15,7 +15,12 @@ import { MobileAppbar } from "./mobile-appbar";
 
 const sections = [
   { id: "home", label: "Home", icon: HomeIcon, link: "/dashboard" },
-  { id: "data-entry", label: "Data Entry", icon: Pencil1Icon, link: "/client" },
+  {
+    id: "data-entry",
+    label: "Data Entry",
+    icon: Pencil1Icon,
+    link: "/data-entry",
+  },
   { id: "design", label: "Design", icon: DrawingPinIcon, link: "/server" },
   { id: "settings", label: "Settings", icon: GearIcon, link: "/settings" },
 ];

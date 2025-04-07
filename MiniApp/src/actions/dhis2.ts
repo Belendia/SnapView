@@ -4,7 +4,7 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import { CreateDHIS2UserSchema, UpdateDHIS2UserSchema } from "@/schemas";
 
-import { encryptPassword } from "@/lib/crypto";
+import { encryptSystemPassword } from "@/lib/crypto";
 import { validateDHIS2Credentials } from "@/lib/dhis2";
 
 export async function createDHIS2Account(
@@ -73,7 +73,7 @@ export async function createDHIS2Account(
     };
   }
 
-  const hashedPassword = await encryptPassword(password);
+  const hashedPassword = await encryptSystemPassword(password);
 
   await db.user.create({
     data: {
@@ -156,7 +156,7 @@ export async function updateDHIS2Account(
     };
   }
 
-  const hashedPassword = await encryptPassword(password);
+  const hashedPassword = await encryptSystemPassword(password);
 
   await db.user.update({
     where: { id },
