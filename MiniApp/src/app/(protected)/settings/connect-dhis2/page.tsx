@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getDHIS2AccountById } from "@/actions/dhis2";
+import { getDHIS2AccountById } from "@/actions/link-dhis2-accounts";
 import { ConnectDHIS2Account } from "../_components/connect-dhis2-account";
 import { Loader } from "@/components/loader"; // optional loader component
 
@@ -27,7 +27,7 @@ const DHIS2Page = () => {
           setAccount(data);
         } else {
           // Account not found – redirect
-          router.push("/linked-accounts");
+          router.push("/settings/linked-accounts");
         }
       }
       setLoading(false);

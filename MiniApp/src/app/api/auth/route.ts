@@ -43,7 +43,7 @@ export async function GET(req: Request) {
 
   if (!hasLinkedDhis2) {
     return NextResponse.redirect(
-      new URL(`/connect-dhis2?telegramId=${telegramId}`, req.url)
+      new URL(`/settings/connect-dhis2?telegramId=${telegramId}`, req.url)
     );
   }
 

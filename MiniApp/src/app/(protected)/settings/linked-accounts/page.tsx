@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getLinkedDHIS2Accounts, deleteDHIS2Account } from "@/actions/dhis2";
+import {
+  getLinkedDHIS2Accounts,
+  deleteDHIS2Account,
+} from "@/actions/link-dhis2-accounts";
 import { useTelegramUser } from "@/lib/telegram";
 import { toast } from "sonner";
 import {
@@ -70,7 +73,7 @@ export default function LinkedAccountsPage() {
 
     if (successMessage && allowedSuccessMessages.has(successMessage)) {
       toast.success(successMessage);
-      router.replace("/linked-accounts"); // clean URL
+      router.replace("/settings/linked-accounts"); // clean URL
     }
   }, [searchParams, router]);
 
@@ -141,7 +144,9 @@ export default function LinkedAccountsPage() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem
                                 onClick={() =>
-                                  router.push(`/connect-dhis2?id=${acc.id}`)
+                                  router.push(
+                                    `/settings/connect-dhis2?id=${acc.id}`
+                                  )
                                 }
                               >
                                 Edit
@@ -169,7 +174,7 @@ export default function LinkedAccountsPage() {
       </div>
 
       {/* Floating Add Button */}
-      <Link href="/connect-dhis2">
+      <Link href="/settings/connect-dhis2">
         <button
           aria-label="Add Account"
           className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition"

@@ -34,7 +34,7 @@ export default function Home() {
       if (result.hasLinkedToDHIS2) {
         router.push("/dashboard");
       } else {
-        router.push("/connect-dhis2");
+        router.push("/settings/connect-dhis2");
       }
     };
 

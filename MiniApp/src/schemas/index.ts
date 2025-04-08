@@ -102,3 +102,11 @@ export const UpdateDHIS2UserSchema = z.object({
     message: "System is required",
   }),
 });
+
+export const PasscodeSchema = z.object({
+  telegramId: z.string().optional(),
+  passcode: z
+    .string()
+    .length(6, "Passcode must be 6 digits")
+    .regex(/^\d{6}$/, "Only numeric passcodes are allowed"),
+});

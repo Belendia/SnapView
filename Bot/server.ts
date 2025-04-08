@@ -26,6 +26,7 @@ bot.start();
 
 app.listen(PORT, () => {
   console.log(`Bot server running on http://localhost:${PORT}`);
+  console.log(`${process.env.MINI_APP_URL}`);
 });
 
 // Graceful shutdown

@@ -35,14 +35,13 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
 import { CreateDHIS2UserSchema, UpdateDHIS2UserSchema } from "@/schemas";
 
 import {
   createDHIS2Account,
   updateDHIS2Account,
   getAvailableDHIS2Systems,
-} from "@/actions/dhis2";
+} from "@/actions/link-dhis2-accounts";
 
 type Props = {
   account?: {
@@ -111,7 +110,9 @@ export function ConnectDHIS2Account({ account }: Props) {
           setError(data.error);
         } else if (data?.success) {
           router.push(
-            `/linked-accounts?success=${encodeURIComponent(data.success)}`
+            `/settings/linked-accounts?success=${encodeURIComponent(
+              data.success
+            )}`
           );
         }
       });
@@ -123,7 +124,7 @@ export function ConnectDHIS2Account({ account }: Props) {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => router.push("/linked-accounts")}
+        onClick={() => router.push("/settings/linked-accounts")}
         className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition mb-4"
       >
         <ArrowLeft className="h-4 w-4" />

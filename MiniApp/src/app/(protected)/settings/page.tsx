@@ -1,127 +1,65 @@
+// app/settings/page.tsx or wherever it's being used
 "use client";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SettingsSchema } from "@/schemas";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+const SettingItem = ({
+  title,
+  description,
+  href,
+}: {
+  title: string;
+  description?: string;
+  href?: string;
+}) => {
+  const router = useRouter();
 
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
-import { UserRole } from "@prisma/client";
-
-const SettingsPage = () => {
-  const [error, setError] = useState<string | undefined>();
-  const [success, setSuccess] = useState<string | undefined>();
-
-  const [isPending, startTransition] = useTransition();
-
-  const form = useForm<z.infer<typeof SettingsSchema>>({
-    resolver: zodResolver(SettingsSchema),
-    defaultValues: {
-      // name: user?.name || "",
-      // role: user?.role || "USER",
-    },
-  });
-
-  const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-    // startTransition(() => {
-    //   settings(values)
-    //     .then((data) => {
-    //       if (data.error) {
-    //         setError(data.error);
-    //       }
-    //       if (data.success) {
-    //         update();
-    //         setSuccess(data.success);
-    //       }
-    //     })
-    //     .catch(() => setError("Something went wrong!"));
-    // });
+  const handleClick = () => {
+    if (href) {
+      router.push(href);
+    }
   };
 
   return (
-    <Card className="w-[600px]">
-      <CardHeader>
-        <p className="text-2xl font-semibold text-center">⚙️ Settings</p>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="John Doe"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      disabled={isPending}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
-                        <SelectItem value={UserRole.USER}>User</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormError message={error} />
-            <FormSuccess message={success} />
-            <Button disabled={isPending} type="submit">
-              Save
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+    <div
+      className="flex items-center justify-between py-4 cursor-pointer hover:bg-muted px-4 rounded-lg"
+      onClick={handleClick}
+    >
+      <div>
+        <h3 className="text-base font-medium leading-none">{title}</h3>
+        {description && (
+          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+        )}
+      </div>
+      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+    </div>
   );
 };
 
-export default SettingsPage;
+export default function SettingsPage() {
+  return (
+    <div className="max-w-xl mx-auto p-4 space-y-4">
+      <h1 className="text-xl font-bold">Settings</h1>
+
+      <Card>
+        <CardContent className="p-0">
+          <SettingItem
+            title="Link Accounts"
+            description="Manage your linked DHIS2 accounts"
+            href="/settings/linked-accounts"
+          />
+          <Separator />
+          <SettingItem
+            title="Set Passcode"
+            description="Enable and manage your app passcode"
+            href="/settings/passcode"
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

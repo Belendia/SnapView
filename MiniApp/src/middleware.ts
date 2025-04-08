@@ -90,7 +90,7 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/connect-dhis2"],
+  matcher: ["/dashboard", "/settings/connect-dhis2"],
 };
 
 // export const config = {

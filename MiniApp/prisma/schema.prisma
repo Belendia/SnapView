@@ -62,6 +62,7 @@ model TelegramUser {
   username   String?
   firstName  String?
   lastName   String?
+  passcode   String?
   users      User[] // One-to-many relationship
 
   createdAt DateTime @default(now())
