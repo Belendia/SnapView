@@ -30,3 +30,22 @@ export async function savePasscode(value: z.infer<typeof PasscodeSchema>) {
 
   return { success: "Passcode updated!" };
 }
+
+export async function loginWithPasscode(input: z.infer<typeof PasscodeSchema>) {
+  const parsed = PasscodeSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "Invalid input." };
+  }
+
+  const { telegramId, passcode } = parsed.data;
+
+  const user = await db.telegramUser.findUnique({
+    where: { telegramId },
+  });
+
+  if (!user || user.passcode !== passcode) {
+    return { success: false, error: "Incorrect passcode." };
+  }
+
+  return { success: true };
+}
