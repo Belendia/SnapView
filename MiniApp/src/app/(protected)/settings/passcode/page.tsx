@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useTelegramUser } from "@/lib/telegram";
+import { useTelegramUser } from "@/hooks/telegram";
 
 import { savePasscode } from "@/actions/passcode";
 import { PasscodeSchema } from "@/schemas";

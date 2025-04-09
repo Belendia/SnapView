@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { useTelegramUser } from "@/lib/telegram";
+import { useTelegramUser } from "@/hooks/telegram";
 import { checkTelegramUserAndStatus } from "@/actions/telegram";
 
 import { Loader } from "@/components/loader";

@@ -16,7 +16,7 @@ import { ErrorPage } from "@/components/error-page";
 import { useDidMount } from "@/hooks/use-did-mount";
 import { useClientOnce } from "@/hooks/use-client-once";
 import { setLocale } from "@/lib/i18n/locale";
-import { initTelegram } from "@/lib/init-telegram";
+import { initTelegram } from "@/lib/telegram/init";
 import { useTelegramMock } from "@/hooks/use-telegram-mock";
 
 function SetupInner({ children }: PropsWithChildren) {

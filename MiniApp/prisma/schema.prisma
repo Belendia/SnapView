@@ -23,7 +23,6 @@ model User {
   username String
   email    String?
   password String?
-  role     UserRole  @default(USER)
   accounts Account[]
 
   telegramUser   TelegramUser? @relation(fields: [telegramUserId], references: [id])
@@ -57,12 +56,14 @@ model Account {
 }
 
 model TelegramUser {
-  id         String  @id @default(cuid())
-  telegramId String  @unique
+  id         String   @id @default(cuid())
+  telegramId String   @unique
   username   String?
   firstName  String?
   lastName   String?
   passcode   String?
+  salt       String?
+  role       UserRole @default(USER)
   users      User[] // One-to-many relationship
 
   createdAt DateTime @default(now())

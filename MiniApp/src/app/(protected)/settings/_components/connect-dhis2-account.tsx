@@ -4,7 +4,7 @@ import * as z from "zod";
 import { useEffect, useState, useTransition } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTelegramUser } from "@/lib/telegram";
+import { useTelegramUser } from "@/hooks/telegram";
 import { Loader2 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";

@@ -81,7 +81,6 @@ export async function createDHIS2Account(
       password: hashedPassword,
       telegramUserId: telegramUser.id,
       systemId,
-      role: "USER",
     },
   });
 

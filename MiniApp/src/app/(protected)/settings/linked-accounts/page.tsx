@@ -6,7 +6,7 @@ import {
   getLinkedDHIS2Accounts,
   deleteDHIS2Account,
 } from "@/actions/link-dhis2-accounts";
-import { useTelegramUser } from "@/lib/telegram";
+import { useTelegramUser } from "@/hooks/telegram";
 import { toast } from "sonner";
 import {
   Table,

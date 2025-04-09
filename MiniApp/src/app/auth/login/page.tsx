@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTelegramUser } from "@/lib/telegram";
+import { useTelegramUser } from "@/hooks/telegram";
 import { validatePasscode } from "@/actions/bridge";
 
 export default function LoginPage() {
