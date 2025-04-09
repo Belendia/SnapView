@@ -40,6 +40,8 @@ export function useTelegramMock(): void {
           language_code: "en",
           is_premium: true,
           allows_write_to_pm: true,
+          photo_url:
+            "https://www.gravatar.com/avatar/205e460b479e2e2e82a1a1a1a1a1a1a1?s=128",
         }),
       ],
       [

@@ -8,8 +8,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTelegramUser } from "@/hooks/telegram";
 
 export const ToolbarButtons = () => {
+  const tgUser = useTelegramUser();
+
+  const photoUrl = tgUser?.photoUrl ?? "/user-avatar.png";
+  const initials =
+    (
+      (tgUser?.firstName?.[0] ?? "") + (tgUser?.lastName?.[0] ?? "")
+    ).toUpperCase() || "U";
+
   const handleLogout = () => {
     // logout();
   };
@@ -22,11 +31,13 @@ export const ToolbarButtons = () => {
           className="p-0 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur shadow-md border border-white/20 w-9 h-9"
         >
           <Avatar className="w-8 h-8">
-            {/* If user image exists, show it here */}
-            <AvatarImage src="/user-avatar.png" alt="User" />
-            {/* Fallback: User initials */}
+            <AvatarImage
+              key={photoUrl}
+              src={photoUrl}
+              alt={tgUser?.username ?? "User"}
+            />
             <AvatarFallback className="bg-white/30 text-sm text-white font-semibold">
-              U
+              {initials}
             </AvatarFallback>
           </Avatar>
         </Button>
