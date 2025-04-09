@@ -1,5 +1,3 @@
-// app/actions/get-chart-sequence.ts
-
 import type { ChartKey } from "@/lib/chart-loader";
 
 export const getChartSequence = async (): Promise<{ type: ChartKey }[]> => {
