@@ -4,8 +4,9 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { PasscodeSchema } from "@/schemas";
 import { hashPasscode, comparePasscode, generateSalt } from "@/lib/crypto";
-import { createUserSession } from "@/lib/auth/session";
+import { createUserSession, removeUserFromSession } from "@/lib/auth/session";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function savePasscode(value: z.infer<typeof PasscodeSchema>) {
   const parseResult = PasscodeSchema.safeParse(value);
@@ -73,4 +74,9 @@ export async function loginWithPasscode(input: z.infer<typeof PasscodeSchema>) {
   );
 
   return { success: true };
+}
+
+export async function logout() {
+  await removeUserFromSession(await cookies());
+  redirect("/");
 }

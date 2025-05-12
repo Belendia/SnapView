@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useTelegramUser } from "@/hooks/telegram";
 
-import { savePasscode } from "@/actions/passcode";
+import { savePasscode } from "@/actions/auth";
 import { PasscodeSchema } from "@/schemas";
 
 export default function SetPasscodePage() {

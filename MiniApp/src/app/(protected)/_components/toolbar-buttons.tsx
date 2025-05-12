@@ -9,6 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useTelegramUser } from "@/hooks/telegram";
+import { logout } from "@/actions/auth";
 
 export const ToolbarButtons = () => {
   const tgUser = useTelegramUser();
@@ -20,7 +21,7 @@ export const ToolbarButtons = () => {
     ).toUpperCase() || "U";
 
   const handleLogout = () => {
-    // logout();
+    logout();
   };
 
   return (
